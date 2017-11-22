@@ -25,7 +25,13 @@ elsif input_option == "2"
   params[:description] = gets.chomp
   response = Unirest.post("http://localhost:3000/v1/products", parameters: params)
   product = response.body
-  pp product
+  if product["errors"]
+    puts "No good!"
+    p product["errors"]
+  else
+    puts "All good!"
+    pp product
+  end
 elsif input_option == "3"
   print "Enter a product id: "
   product_id = gets.chomp
