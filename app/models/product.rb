@@ -6,6 +6,10 @@ class Product < ApplicationRecord
     Supplier.find_by(id: self.supplier_id)
   end
 
+  def images
+    Image.where(product_id: self.id)
+  end
+
   def is_discounted
     price <= 2
   end
@@ -23,6 +27,7 @@ class Product < ApplicationRecord
       id: id,
       name: name,
       description: description,
+      images: images.map { |image| image.url },
       price: price,
       tax: tax,
       total: total,
