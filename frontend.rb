@@ -12,6 +12,10 @@ while true
   puts "[4] Update a product"
   puts "[5] Delete a product"
   puts
+  puts "[signup] Sign up (create a user)"
+  puts "[login] Log in (create a jwt)"
+  puts "[logout] Log out (destroy the jwt)"
+  puts
   puts "[q] Quit"
 
   input_option = gets.chomp
@@ -77,6 +81,46 @@ while true
     product_id = gets.chomp
     response = Unirest.delete("http://localhost:3000/v1/products/#{product_id}")
     pp response.body
+  elsif input_option == "signup"
+    print "Enter name: "
+    input_name = gets.chomp
+    print "Enter email: "
+    input_email = gets.chomp
+    print "Enter password: "
+    input_password = gets.chomp
+    print "Confirm password: "
+    input_password_confirmation = gets.chomp
+    response = Unirest.post(
+      "http://localhost:3000/v1/users",
+      parameters: {
+        name: input_name,
+        email: input_email,
+        password: input_password,
+        password_confirmation: input_password_confirmation
+      }
+    )
+    pp response.body
+  elsif input_option == "login"
+    print "Enter email: "
+    input_email = gets.chomp
+    print "Enter password: "
+    input_password = gets.chomp
+    response = Unirest.post(
+      "http://localhost:3000/user_token",
+      parameters: {
+        auth: {
+          email: input_email,
+          password: input_password
+        }
+      }
+    )
+    jwt = response.body["jwt"]
+    Unirest.default_header("Authorization", "Bearer #{jwt}")
+    pp response.body
+  elsif input_option == "logout"
+    jwt = ""
+    Unirest.clear_default_headers()
+    puts "Logged out successfully!"
   elsif input_option == "q"
     puts "Goodbye!"    
     break
