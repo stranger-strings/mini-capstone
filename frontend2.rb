@@ -1,41 +1,31 @@
 require "unirest"
 require "pp"
+require "tty-prompt"
 
 class Frontend
   def initialize
     @jwt = ""
-    @menu_options = [
-      {value: "1", prompt: "Show all products", method: -> do show_all_products end},
-      {value: "1.1", prompt: "Show all products that match search terms", method: -> do show_all_products_search end},
-      {value: "1.2", prompt: "Show all products sorted by price", method: -> do show_all_products_sorted_by_price end},
-      {value: "2", prompt: "Create a product", method: -> do create_product end},
-      {value: "3", prompt: "Show one product", method: -> do show_one_product end},
-      {value: "4", prompt: "Update a product", method: -> do update_product end},
-      {value: "5", prompt: "Delete a product", method: -> do delete_product end},
-      {value: "6", prompt: "Order a product", method: -> do order_product end},
-      {value: "7", prompt: "View all orders", method: -> do show_all_orders end},
-      {value: "signup", prompt: "Sign up (create a user)", method: -> do signup end},
-      {value: "login", prompt: "Log in (create a jwt)", method: -> do login end},
-      {value: "logout", prompt: "Log out (destroy the jwt)", method: -> do logout end},
-      {value: "q", prompt: "Quit", method: -> do quit end}
-    ]
-  end
-
-  def find_menu_option(input_value)
-    @menu_options.each do |menu_option|
-      if menu_option[:value] == input_value
-        return menu_option
-      end
-    end
-    return nil
+    @prompt = TTY::Prompt.new
+    @menu_options = {
+      "[1] Show all products" => -> do show_all_products end,
+      "[1.1] Show all products that match search terms" => -> do show_all_products_search end,
+      "[1.2] Show all products sorted by price" => -> do show_all_products_sorted_by_price end,
+      "[2] Create a product" => -> do create_product end,
+      "[3] Show one product" => -> do show_one_product end,
+      "[4] Update a product" => -> do update_product end,
+      "[5] Delete a product" => -> do delete_product end,
+      "[6] Order a product" => -> do order_product end,
+      "[7] View all orders" => -> do show_all_orders end,
+      "[signup] Sign up (create a user)" => -> do signup end,
+      "[login] Log in (create a jwt)" => -> do login end,
+      "[logout] Log out (destroy the jwt)" => -> do logout end,
+      "[q] Quit" => -> do quit end
+    }
   end
 
   def show_menu
     system "clear"
-    puts "Choose an option:"
-    @menu_options.each do |menu_option|
-      puts "[#{menu_option[:value]}] #{menu_option[:prompt]}"
-    end
+    return @prompt.select("Choose an option:", @menu_options.keys)
   end
 
   def show_all_products
@@ -190,11 +180,10 @@ class Frontend
 
   def run
     while true
-      show_menu
-      input_option = gets.chomp
-      menu_option = find_menu_option(input_option)
-      if menu_option
-        menu_option[:method].call
+      input_option = show_menu
+      menu_method = @menu_options[input_option]
+      if menu_method
+        menu_method.call
       else
         puts "Unknown option."        
       end
