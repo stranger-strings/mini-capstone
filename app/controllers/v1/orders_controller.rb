@@ -1,4 +1,9 @@
 class V1::OrdersController < ApplicationController
+  def index
+    orders = current_user.orders
+    render json: orders.as_json
+  end
+
   def create
     product = Product.find_by(id: params[:input_product_id])
     calculated_subtotal = product.price * params[:input_quantity].to_i
