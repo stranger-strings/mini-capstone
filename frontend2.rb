@@ -4,26 +4,38 @@ require "pp"
 class Frontend
   def initialize
     @jwt = ""
+    @menu_options = [
+      {value: "1", prompt: "Show all products", method: -> do show_all_products end},
+      {value: "1.1", prompt: "Show all products that match search terms", method: -> do show_all_products_search end},
+      {value: "1.2", prompt: "Show all products sorted by price", method: -> do show_all_products_sorted_by_price end},
+      {value: "2", prompt: "Create a product", method: -> do create_product end},
+      {value: "3", prompt: "Show one product", method: -> do show_one_product end},
+      {value: "4", prompt: "Update a product", method: -> do update_product end},
+      {value: "5", prompt: "Delete a product", method: -> do delete_product end},
+      {value: "6", prompt: "Order a product", method: -> do order_product end},
+      {value: "7", prompt: "View all orders", method: -> do show_all_orders end},
+      {value: "signup", prompt: "Sign up (create a user)", method: -> do signup end},
+      {value: "login", prompt: "Log in (create a jwt)", method: -> do login end},
+      {value: "logout", prompt: "Log out (destroy the jwt)", method: -> do logout end},
+      {value: "q", prompt: "Quit", method: -> do quit end}
+    ]
+  end
+
+  def find_menu_option(input_value)
+    @menu_options.each do |menu_option|
+      if menu_option[:value] == input_value
+        return menu_option
+      end
+    end
+    return nil
   end
 
   def show_menu
     system "clear"
     puts "Choose an option:"
-    puts "[1] Show all products"
-    puts "  [1.1] Show all products that match search terms"
-    puts "  [1.2] Show all products sorted by price"
-    puts "[2] Create a product"
-    puts "[3] Show one product"
-    puts "[4] Update a product"
-    puts "[5] Delete a product"
-    puts "[6] Order a product"
-    puts "[7] View all orders"
-    puts
-    puts "[signup] Sign up (create a user)"
-    puts "[login] Log in (create a jwt)"
-    puts "[logout] Log out (destroy the jwt)"
-    puts
-    puts "[q] Quit"
+    @menu_options.each do |menu_option|
+      puts "[#{menu_option[:value]}] #{menu_option[:prompt]}"
+    end
   end
 
   def show_all_products
@@ -180,32 +192,11 @@ class Frontend
     while true
       show_menu
       input_option = gets.chomp
-      if input_option == "1"
-        show_all_products
-      elsif input_option == "1.1"
-        show_all_products_search
-      elsif input_option == "1.2"
-        show_all_products_sorted_by_price
-      elsif input_option == "2"
-        create_product
-      elsif input_option == "3"
-        show_one_product
-      elsif input_option == "4"
-        update_product
-      elsif input_option == "5"
-        delete_product
-      elsif input_option == "6"
-        order_product
-      elsif input_option == "7"
-        show_all_orders
-      elsif input_option == "signup"
-        signup
-      elsif input_option == "login"
-        login
-      elsif input_option == "logout"
-        logout
-      elsif input_option == "q"
-        quit
+      menu_option = find_menu_option(input_option)
+      if menu_option
+        menu_option[:method].call
+      else
+        puts "Unknown option."        
       end
       puts "Press enter to continue"
       gets.chomp
