@@ -16,16 +16,20 @@ class V1::ProductsController < ApplicationController
   end
 
   def create
-    product = Product.new(
-      name: params[:name],
-      price: params[:price],
-      image: params[:image],
-      description: params[:description]
-    )
-    if product.save
-      render json: product.as_json
+    if current_user && current_user.admin
+      product = Product.new(
+        name: params[:name],
+        price: params[:price],
+        image: params[:image],
+        description: params[:description]
+      )
+      if product.save
+        render json: product.as_json
+      else
+        render json: {errors: product.errors.full_messages}, status: :bad_request
+      end
     else
-      render json: {errors: product.errors.full_messages}, status: :bad_request
+      render json: {errors: "Not authorized!"}, status: :unauthorized
     end
   end
 
