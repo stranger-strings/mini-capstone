@@ -14,6 +14,12 @@ class V1::ProductsController < ApplicationController
       products = Product.all.order(:price => :asc)
     end
 
+    category_id = params[:input_category_id]
+    if category_id
+      category = Category.find_by(id: category_id)
+      products = category.products
+    end
+
     render json: products.as_json
   end
 
