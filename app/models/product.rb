@@ -1,6 +1,12 @@
 class Product < ApplicationRecord
   validates :name, presence: true
   validates :price, presence: true
+  has_many :category_products
+
+  has_many :categories, through: :category_products
+  # def categories
+  #   category_products.map {|category_product| category_product.category}
+  # end
 
   has_many :orders
   belongs_to :supplier
@@ -35,7 +41,8 @@ class Product < ApplicationRecord
       tax: tax,
       total: total,
       is_discounted: is_discounted,
-      supplier: supplier.as_json
+      supplier: supplier.as_json,
+      categories: categories.as_json
     }
   end
 end
