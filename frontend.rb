@@ -11,8 +11,8 @@ while true
   puts "[3] Show one product"
   puts "[4] Update a product"
   puts "[5] Delete a product"
-  puts "[6] Order a product"
-  puts "[7] View all orders"
+  puts
+  puts "[6] Add a product to the shopping cart"
   puts
   puts "[signup] Sign up (create a user)"
   puts "[login] Log in (create a jwt)"
@@ -89,19 +89,15 @@ while true
     params[:input_product_id] = gets.chomp
     print "Quantity: "
     params[:input_quantity] = gets.chomp
-    response = Unirest.post("http://localhost:3000/v1/orders", parameters: params)
-    order = response.body
-    if order["errors"]
+    response = Unirest.post("http://localhost:3000/v1/carted_products", parameters: params)
+    carted_product = response.body
+    if carted_product["errors"]
       puts "No good!"
-      p order["errors"]
+      p carted_product["errors"]
     else
       puts "All good!"
-      pp order
+      pp carted_product
     end
-  elsif input_option == "7"
-    response = Unirest.get("http://localhost:3000/v1/orders")
-    orders = response.body
-    pp orders
   elsif input_option == "signup"
     print "Enter name: "
     input_name = gets.chomp
