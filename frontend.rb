@@ -103,12 +103,17 @@ while true
     response = Unirest.get("http://localhost:3000/v1/carted_products")
     carted_products = response.body
     pp carted_products
-    puts "Press 'o' to order the items, or enter to continue"
+    puts "Press 'o' to order the items, or 'r' to remove a carted product, or enter to continue"
     input_sub_option = gets.chomp
     if input_sub_option == 'o'
       response = Unirest.post("http://localhost:3000/v1/orders")
       order = response.body
       pp order
+    elsif input_sub_option == 'r'
+      print "Enter the id of the carted product to remove: "
+      id = gets.chomp
+      response = Unirest.delete("http://localhost:3000/v1/carted_products/#{id}")
+      pp response.body
     end
   elsif input_option == "signup"
     print "Enter name: "
