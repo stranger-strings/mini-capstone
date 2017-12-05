@@ -13,6 +13,7 @@ while true
   puts "[5] Delete a product"
   puts
   puts "[6] Add a product to the shopping cart"
+  puts "[7] View shopping cart"
   puts
   puts "[signup] Sign up (create a user)"
   puts "[login] Log in (create a jwt)"
@@ -98,6 +99,10 @@ while true
       puts "All good!"
       pp carted_product
     end
+  elsif input_option == "7"
+    response = Unirest.get("http://localhost:3000/v1/carted_products")
+    carted_products = response.body
+    pp carted_products
   elsif input_option == "signup"
     print "Enter name: "
     input_name = gets.chomp
