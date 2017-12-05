@@ -103,6 +103,13 @@ while true
     response = Unirest.get("http://localhost:3000/v1/carted_products")
     carted_products = response.body
     pp carted_products
+    puts "Press 'o' to order the items, or enter to continue"
+    input_sub_option = gets.chomp
+    if input_sub_option == 'o'
+      response = Unirest.post("http://localhost:3000/v1/orders")
+      order = response.body
+      pp order
+    end
   elsif input_option == "signup"
     print "Enter name: "
     input_name = gets.chomp
